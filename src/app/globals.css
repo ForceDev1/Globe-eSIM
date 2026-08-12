@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+:root {
+  --app-bg: #000000;
+  --page-bg: #000000;
+  --card-bg: #17171a;
+  --card-bg-2: #1b1b1e;
+  --text-primary: #ffffff;
+  --text-secondary: #8e8e93;
+  --hairline: rgba(255, 255, 255, 0.08);
+}
+
+body {
+  background: var(--page-bg);
+  color: var(--text-primary);
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Text",
+    "SF Pro Display",
+    "Helvetica Neue",
+    Inter,
+    Arial,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
