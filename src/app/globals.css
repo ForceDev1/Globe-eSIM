@@ -5,9 +5,12 @@
   --page-bg: #000000;
   --card-bg: #17171a;
   --card-bg-2: #1b1b1e;
+  --sheet-bg: #1c1c1f;
   --text-primary: #ffffff;
   --text-secondary: #8e8e93;
   --hairline: rgba(255, 255, 255, 0.08);
+  --accent: #2d7cff;
+  --accent-soft: rgba(45, 124, 255, 0.16);
 }
 
 body {
@@ -23,4 +26,11 @@ body {
     Arial,
     sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

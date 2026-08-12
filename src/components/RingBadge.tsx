@@ -1,5 +1,5 @@
 type RingBadgeProps = {
-  value: number;
+  value: React.ReactNode;
   progress?: number;
   size?: number;
 };
@@ -12,6 +12,7 @@ export default function RingBadge({
   const stroke = 2;
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
+  const fontSize = Math.round(size * 0.42);
 
   return (
     <div
@@ -44,7 +45,10 @@ export default function RingBadge({
           strokeDashoffset={c * (1 - progress)}
         />
       </svg>
-      <span className="absolute text-[17px] font-semibold text-white">
+      <span
+        className="absolute font-semibold text-white"
+        style={{ fontSize }}
+      >
         {value}
       </span>
     </div>
