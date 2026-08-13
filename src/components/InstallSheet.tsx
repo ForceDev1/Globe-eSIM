@@ -149,6 +149,15 @@ export default function InstallSheet({ open, esim, onClose, onInstalled }: Insta
     onClose();
   }
 
+  // The sheet never unmounts (only fades out), so a quick-install timer
+  // left running after an early close would still fire later and mark the
+  // eSIM installed behind the user's back. Cancel it on any explicit close.
+  function handleClose() {
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+    onClose();
+  }
+
   const country = esim ? findCountry(esim.countryCode) : null;
   const plan = esim ? planFor(esim) : null;
   const activeIndex = METHODS.findIndex((m) => m.key === method);
@@ -163,7 +172,7 @@ export default function InstallSheet({ open, esim, onClose, onInstalled }: Insta
       <button
         type="button"
         aria-label="Close"
-        onClick={onClose}
+        onClick={handleClose}
         className="absolute inset-0 bg-black/45"
       />
 
@@ -190,7 +199,7 @@ export default function InstallSheet({ open, esim, onClose, onInstalled }: Insta
           </div>
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleClose}
             aria-label="Close"
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#f0f2f7] text-[var(--ink)]"
           >
