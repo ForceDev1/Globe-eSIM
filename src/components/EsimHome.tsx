@@ -1,81 +1,37 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Search,
-  QrCode,
-  ChevronRight,
-  Globe,
-  House,
-  CardSim,
-  Signal,
-  MessageCircle,
-  CircleUserRound,
-} from "lucide-react";
-import RingBadge from "@/components/RingBadge";
+import { CardSim, ChevronDown, ChevronRight, Search, Wallet, Gift } from "lucide-react";
+import BottomNav from "@/components/BottomNav";
 import CountrySheet from "@/components/CountrySheet";
+import PlanSheet from "@/components/PlanSheet";
+import TopUpSheet from "@/components/TopUpSheet";
 import {
   countries,
   flagEmoji,
-  findCountry,
-  popularCountryCodes,
+  suggestedForYouCodes,
   type Country,
 } from "@/data/countries";
+import { plans } from "@/data/plans";
 
-const popularDestinations = popularCountryCodes
+const destinationSuggestions = suggestedForYouCodes
   .map((code) => countries.find((c) => c.code === code))
   .filter((c): c is Country => Boolean(c));
 
-function IconButton({
-  children,
-  label,
-  onClick,
-}: {
-  children: React.ReactNode;
-  label: string;
-  onClick?: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      onClick={onClick}
-      className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white/90"
-    >
-      {children}
-    </button>
-  );
-}
-
-function NavButton({
-  children,
-  label,
-  active = false,
-}: {
-  children: React.ReactNode;
-  label: string;
-  active?: boolean;
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      aria-current={active ? "page" : undefined}
-      className={`flex h-11 w-11 items-center justify-center rounded-full ${
-        active ? "text-white" : "text-white/55"
-      }`}
-    >
-      {children}
-    </button>
-  );
-}
+const USER_NAME = "Alex";
+const USER_INITIALS = "A";
 
 export default function EsimHome() {
-  const [sheetOpen, setSheetOpen] = useState(false);
-  const [prefillCode, setPrefillCode] = useState<string | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
+  const [balance, setBalance] = useState(24.8);
 
-  const activeEsim = findCountry("FR");
+  const [countrySheetOpen, setCountrySheetOpen] = useState(false);
+  const [topUpOpen, setTopUpOpen] = useState(false);
+
+  const [planOpen, setPlanOpen] = useState(false);
+  const [planCountry, setPlanCountry] = useState<Country | null>(null);
+  const [planPreselect, setPlanPreselect] = useState<string | null>(null);
+
+  const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
     if (!toast) return;
@@ -83,205 +39,259 @@ export default function EsimHome() {
     return () => clearTimeout(timer);
   }, [toast]);
 
-  function openSheet(code: string | null = null) {
-    setPrefillCode(code);
-    setSheetOpen(true);
+  function openPlan(country: Country | null, planId: string | null = null) {
+    setPlanCountry(country);
+    setPlanPreselect(planId);
+    setPlanOpen(true);
   }
 
-  function handleConfirm(country: Country) {
-    setSheetOpen(false);
-    setToast(`Activating your eSIM for ${country.name}…`);
+  function handleCountrySelected(country: Country) {
+    setCountrySheetOpen(false);
+    // Let the country sheet finish closing before the plan sheet slides up,
+    // so the two transitions read as a sequence rather than a jump-cut.
+    setTimeout(() => openPlan(country), 220);
+  }
+
+  function handleCheckout({
+    country,
+    planId,
+    quantity,
+  }: {
+    country: Country | null;
+    planId: string;
+    quantity: number;
+  }) {
+    const plan = plans.find((p) => p.id === planId);
+    setPlanOpen(false);
+    const place = country ? country.name : "Global+";
+    setToast(
+      `${quantity > 1 ? `${quantity} eSIMs` : "eSIM"} for ${place} (${plan?.dataGb}GB) added — check out securely next.`,
+    );
+  }
+
+  function handleTopUp(amount: number) {
+    setTopUpOpen(false);
+    setBalance((b) => b + amount);
+    setToast(`$${amount.toFixed(2)} added to your balance.`);
   }
 
   return (
-    <div className="flex min-h-screen justify-center bg-black">
+    <div className="flex min-h-screen justify-center bg-[var(--page-bg)]">
       <div
-        className="flex w-full max-w-[420px] flex-col px-5 pt-6"
-        style={{ paddingBottom: "max(16px, env(safe-area-inset-bottom))" }}
+        className="flex w-full max-w-[420px] flex-col pb-32"
+        style={{
+          background: "linear-gradient(180deg, var(--header-wash) 0%, var(--page-bg) 300px)",
+        }}
       >
-        {/* Toast — sits below the header row so it never overlaps the
-            search / QR icon buttons */}
+        {/* Toast */}
         <div
           role="status"
           aria-live="polite"
-          className={`fixed left-1/2 z-[60] w-[calc(100%-40px)] max-w-[380px] -translate-x-1/2 rounded-2xl bg-[var(--sheet-bg)] px-4 py-3 text-center text-[14px] font-medium text-white shadow-lg transition-all duration-300 ${
+          className={`fixed left-1/2 z-[60] w-[calc(100%-40px)] max-w-[380px] -translate-x-1/2 rounded-2xl px-4 py-3 text-center text-[14px] font-medium text-white shadow-lg transition-all duration-300 ${
             toast ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-3 opacity-0"
           }`}
-          style={{ top: "calc(env(safe-area-inset-top, 0px) + 84px)" }}
+          style={{
+            top: "calc(env(safe-area-inset-top, 0px) + 16px)",
+            background: "var(--dark)",
+          }}
         >
           {toast}
         </div>
 
-        {/* Header */}
-        <header className="flex items-center justify-between pb-5">
-          <h1 className="text-[28px] font-bold tracking-tight text-white">
-            eSIM
-          </h1>
-          <div className="flex items-center gap-2.5">
-            <IconButton label="Search countries" onClick={() => openSheet()}>
-              <Search size={18} strokeWidth={2} />
-            </IconButton>
-            <IconButton label="Scan QR to activate">
-              <QrCode size={18} strokeWidth={2} />
-            </IconButton>
-          </div>
-        </header>
-
-        {/* Primary CTA */}
-        <button
-          type="button"
-          onClick={() => openSheet()}
-          className="flex items-center gap-3.5 rounded-[26px] p-4 text-left"
-          style={{ background: "var(--accent-soft)" }}
+        <div
+          className="flex flex-col px-5 pt-6"
+          style={{ paddingTop: "max(24px, calc(env(safe-area-inset-top) + 12px))" }}
         >
-          <span
-            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full"
-            style={{ background: "var(--accent)" }}
-          >
-            <Globe size={22} strokeWidth={2} className="text-white" />
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block text-[16px] font-semibold text-white">
-              Connect eSIM
-            </span>
-            <span className="block text-[13px] text-[var(--text-secondary)]">
-              Instant data in 190+ countries
-            </span>
-          </span>
-          <ChevronRight size={18} strokeWidth={2} className="shrink-0 text-white/50" />
-        </button>
-
-        {/* Top two cards */}
-        <div className="mt-3.5 grid grid-cols-2 gap-3.5">
-          <div className="flex h-[164px] flex-col justify-between rounded-[26px] bg-[var(--card-bg)] p-4">
-            <div className="flex items-start justify-between">
-              <RingBadge
-                value={activeEsim ? flagEmoji(activeEsim.code) : "—"}
-                size={40}
-                progress={0.68}
-              />
-              <span className="mt-1 text-[11px] font-medium text-[var(--text-secondary)]">
-                68%
+          {/* Header */}
+          <header className="flex items-center justify-between">
+            <button
+              type="button"
+              className="flex items-center gap-2.5 rounded-full bg-white/70 py-1.5 pl-1.5 pr-3 shadow-sm"
+            >
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--dark)]">
+                <CardSim size={16} strokeWidth={2} className="text-white" />
               </span>
-            </div>
-            <div>
-              <p className="text-[15px] font-semibold text-white">
-                {activeEsim?.name ?? "Active eSIM"}
-              </p>
-              <p className="mt-0.5 text-[13px] text-[var(--text-secondary)]">
-                Expires in 12 days
-              </p>
-            </div>
-          </div>
-
-          <div className="flex h-[164px] flex-col justify-between rounded-[26px] bg-[var(--card-bg)] p-4">
-            <div className="flex items-start justify-between">
-              <span className="text-[28px] font-bold leading-none text-white">
-                3.6
-                <span className="ml-1 text-[15px] font-medium text-[var(--text-secondary)]">
-                  GB
+              <span className="text-left leading-tight">
+                <span className="block text-[13px] font-semibold text-[var(--ink)]">
+                  eSIM Line
+                </span>
+                <span className="block text-[11px] text-[var(--ink-soft)]">
+                  +1 555 010 0199
                 </span>
               </span>
-              <Signal size={16} strokeWidth={2} className="mt-1 text-white/50" />
-            </div>
-            <div>
-              <p className="text-[15px] font-semibold text-white">
-                Data left
-              </p>
-              <p className="mt-0.5 text-[13px] text-[var(--text-secondary)]">
-                of 5 GB total
-              </p>
-            </div>
-          </div>
-        </div>
+              <ChevronDown size={14} strokeWidth={2} className="text-[var(--ink-soft)]" />
+            </button>
 
-        {/* Popular destinations */}
-        <div className="mt-3.5 rounded-[26px] bg-[var(--card-bg)] py-5">
-          <div className="flex items-center justify-between px-5">
-            <h2 className="text-[15px] font-semibold text-white">
-              Popular destinations
+            <button
+              type="button"
+              aria-label="Profile"
+              className="flex h-11 w-11 items-center justify-center rounded-full text-[15px] font-bold text-white"
+              style={{ background: "linear-gradient(135deg, var(--accent-2), var(--accent))" }}
+            >
+              {USER_INITIALS}
+            </button>
+          </header>
+
+          {/* Search */}
+          <button
+            type="button"
+            onClick={() => setCountrySheetOpen(true)}
+            className="mt-5 flex items-center gap-2.5 rounded-2xl bg-white px-4 py-3.5 text-left shadow-sm"
+          >
+            <Search size={17} strokeWidth={2} className="text-[var(--ink-soft)]" />
+            <span className="text-[15px] text-[var(--ink-soft)]">Search a country…</span>
+          </button>
+
+          {/* Greeting */}
+          <div className="mt-5">
+            <p className="text-[20px] font-bold text-[var(--ink)]">Hi {USER_NAME},</p>
+            <p className="mt-0.5 text-[13px] text-[var(--ink-soft)]">
+              Overview of your recent usage
+            </p>
+          </div>
+
+          {/* Balance */}
+          <div className="mt-4 flex items-center justify-between rounded-[24px] bg-white p-4 shadow-[var(--shadow-card)]">
+            <div className="flex items-center gap-3">
+              <span
+                className="flex h-11 w-11 items-center justify-center rounded-full"
+                style={{ background: "linear-gradient(135deg, var(--accent-2), var(--accent))" }}
+              >
+                <Wallet size={18} strokeWidth={2} className="text-white" />
+              </span>
+              <div>
+                <p className="text-[12px] text-[var(--ink-soft)]">Current Balance</p>
+                <p className="text-[19px] font-bold text-[var(--ink)]">
+                  ${balance.toFixed(2)}
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setTopUpOpen(true)}
+              className="flex items-center gap-1 rounded-full py-2.5 pl-4 pr-3 text-[13px] font-semibold text-white"
+              style={{ background: "var(--dark)" }}
+            >
+              Top Up
+              <span className="text-[16px] leading-none">+</span>
+            </button>
+          </div>
+
+          {/* Destination for you */}
+          <div className="mt-6 flex items-center justify-between">
+            <h2 className="text-[16px] font-bold text-[var(--ink)]">
+              Destination for you
             </h2>
             <button
               type="button"
-              onClick={() => openSheet()}
-              className="text-[13px] font-medium"
-              style={{ color: "var(--accent)" }}
+              onClick={() => setCountrySheetOpen(true)}
+              className="text-[13px] font-medium text-[var(--ink-soft)]"
             >
               See all
             </button>
           </div>
 
-          <div className="mt-3.5 flex gap-3 overflow-x-auto px-5 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {popularDestinations.map((country) => (
+          <div className="mt-3.5 grid grid-cols-3 gap-3">
+            {destinationSuggestions.map((country) => (
               <button
                 key={country.code}
                 type="button"
-                onClick={() => openSheet(country.code)}
-                className="flex w-[112px] shrink-0 flex-col items-start gap-2 rounded-2xl bg-white/[0.05] p-3 text-left"
+                onClick={() => openPlan(country)}
+                className="flex flex-col items-center gap-2"
               >
-                <span className="text-[26px] leading-none">
+                <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-white text-[30px] shadow-sm">
                   {flagEmoji(country.code)}
+                  <span
+                    className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full text-white"
+                    style={{ background: "var(--dark)" }}
+                  >
+                    <ChevronRight size={13} strokeWidth={2.5} />
+                  </span>
                 </span>
-                <span className="text-[13px] font-medium leading-tight text-white">
+                <span className="text-[13px] font-medium text-[var(--ink)]">
                   {country.name}
                 </span>
-                <span className="text-[12px] text-[var(--text-secondary)]">
-                  from ${country.price}
+              </button>
+            ))}
+          </div>
+
+          {/* Promo banner */}
+          <button
+            type="button"
+            onClick={() => setTopUpOpen(true)}
+            className="mt-6 flex items-center gap-4 rounded-[24px] p-5 text-left"
+            style={{ background: "var(--pink)" }}
+          >
+            <div className="min-w-0 flex-1">
+              <p
+                className="text-[11px] font-bold uppercase tracking-wide"
+                style={{ color: "var(--pink-ink)", opacity: 0.8 }}
+              >
+                Gift Balance
+              </p>
+              <p className="mt-1 text-[18px] font-extrabold leading-snug" style={{ color: "var(--pink-ink)" }}>
+                25% Gift Balance Get Instantly!
+              </p>
+              <p className="mt-1 text-[12px]" style={{ color: "var(--pink-ink)", opacity: 0.85 }}>
+                Get 25% extra credit on every top-up.
+              </p>
+              <span
+                className="mt-3 inline-block rounded-full px-4 py-2 text-[13px] font-semibold text-white"
+                style={{ background: "var(--dark)" }}
+              >
+                Buy Now
+              </span>
+            </div>
+            <Gift size={44} strokeWidth={1.5} style={{ color: "var(--pink-ink)" }} className="shrink-0" />
+          </button>
+
+          {/* Popular plans */}
+          <div className="mt-6 flex items-center justify-between">
+            <h2 className="text-[16px] font-bold text-[var(--ink)]">Popular plans</h2>
+          </div>
+
+          <div className="mt-3.5 flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {plans.map((plan) => (
+              <button
+                key={plan.id}
+                type="button"
+                onClick={() => openPlan(null, plan.id)}
+                className="flex w-[128px] shrink-0 flex-col items-start gap-2 rounded-2xl bg-white p-3.5 text-left shadow-sm"
+              >
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f0f2f7]">
+                  <Wallet size={15} strokeWidth={2} className="text-[var(--ink)]" />
+                </span>
+                <span className="text-[13px] font-semibold text-[var(--ink)]">
+                  {plan.dataGb}GB Plan
+                </span>
+                <span className="text-[12px] text-[var(--ink-soft)]">
+                  ${plan.price.toFixed(2)} · {plan.days}d
                 </span>
               </button>
             ))}
           </div>
         </div>
-
-        {/* Spend row */}
-        <div className="mt-3.5 flex items-center justify-between rounded-[26px] bg-[var(--card-bg)] px-5 py-4">
-          <div>
-            <p className="text-[15px] font-semibold text-white">
-              Total spent
-            </p>
-            <p className="mt-0.5 text-[13px] text-[var(--text-secondary)]">
-              This month
-            </p>
-          </div>
-          <span className="text-[26px] font-bold leading-none text-white">
-            $18
-            <span className="ml-1 text-[14px] font-medium text-[var(--text-secondary)]">
-              .50
-            </span>
-          </span>
-        </div>
-
-        {/* Spacer before bottom nav */}
-        <div className="min-h-8 flex-1" />
-
-        {/* Bottom nav */}
-        <nav className="sticky bottom-0 mt-5 flex items-center justify-between rounded-full bg-[#141416] px-3 py-2">
-          <NavButton label="Home" active>
-            <House size={22} strokeWidth={2} />
-          </NavButton>
-          <NavButton label="My eSIMs">
-            <CardSim size={22} strokeWidth={2} />
-          </NavButton>
-          <NavButton label="Usage">
-            <Signal size={22} strokeWidth={2} />
-          </NavButton>
-          <NavButton label="Support chat">
-            <span className="relative flex">
-              <MessageCircle size={22} strokeWidth={2} />
-              <span className="absolute -right-0.5 -top-0.5 h-[7px] w-[7px] rounded-full bg-white" />
-            </span>
-          </NavButton>
-          <NavButton label="Profile">
-            <CircleUserRound size={22} strokeWidth={2} />
-          </NavButton>
-        </nav>
       </div>
 
+      <BottomNav active="home" onExplore={() => setCountrySheetOpen(true)} />
+
       <CountrySheet
-        open={sheetOpen}
-        initialCode={prefillCode}
-        onClose={() => setSheetOpen(false)}
-        onConfirm={handleConfirm}
+        open={countrySheetOpen}
+        onClose={() => setCountrySheetOpen(false)}
+        onSelect={handleCountrySelected}
+      />
+      <PlanSheet
+        open={planOpen}
+        country={planCountry}
+        initialPlanId={planPreselect}
+        onClose={() => setPlanOpen(false)}
+        onCheckout={handleCheckout}
+      />
+      <TopUpSheet
+        open={topUpOpen}
+        balance={balance}
+        onClose={() => setTopUpOpen(false)}
+        onConfirm={handleTopUp}
       />
     </div>
   );

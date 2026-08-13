@@ -21,6 +21,7 @@ export const countries: Country[] = [
   { code: "MX", name: "Mexico", price: "5.00" },
   { code: "ID", name: "Indonesia", price: "4.50" },
   { code: "VN", name: "Vietnam", price: "3.50" },
+  { code: "AU", name: "Australia", price: "5.50" },
 ];
 
 /** ISO alpha-2 code -> flag emoji, via regional indicator symbols. */
@@ -31,6 +32,8 @@ export function flagEmoji(code: string) {
 }
 
 export const popularCountryCodes = ["TR", "AE", "TH", "US", "FR", "JP"];
+
+export const suggestedForYouCodes = ["DE", "GR", "AU"];
 
 export function findCountry(code: string | null) {
   return countries.find((c) => c.code === code) ?? null;

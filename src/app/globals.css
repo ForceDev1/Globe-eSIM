@@ -1,21 +1,34 @@
 @import "tailwindcss";
 
 :root {
-  --app-bg: #000000;
-  --page-bg: #000000;
-  --card-bg: #17171a;
-  --card-bg-2: #1b1b1e;
-  --sheet-bg: #1c1c1f;
-  --text-primary: #ffffff;
-  --text-secondary: #8e8e93;
-  --hairline: rgba(255, 255, 255, 0.08);
-  --accent: #2d7cff;
-  --accent-soft: rgba(45, 124, 255, 0.16);
+  --page-bg: #f4f6fb;
+  --header-wash: #e7f0ff;
+  --card-bg: #ffffff;
+  --ink: #14161b;
+  --ink-soft: #8a8f9b;
+  --hairline: rgba(20, 20, 30, 0.07);
+  --shadow-card: 0 10px 28px rgba(20, 24, 60, 0.07);
+
+  --accent: #3d7bff;
+  --accent-2: #6fa2ff;
+  --accent-soft: rgba(61, 123, 255, 0.12);
+
+  --pink: #fbdcea;
+  --pink-ink: #c94d84;
+
+  --dark: #14161b;
+  --dark-2: #24262d;
+
+  /* Liquid-glass bottom nav */
+  --glass-bg: rgba(18, 19, 24, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.16);
+  --glass-highlight: rgba(255, 255, 255, 0.22);
+  --glass-bubble: rgba(255, 255, 255, 0.18);
 }
 
 body {
   background: var(--page-bg);
-  color: var(--text-primary);
+  color: var(--ink);
   font-family:
     -apple-system,
     BlinkMacSystemFont,
@@ -26,6 +39,18 @@ body {
     Arial,
     sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Shared liquid-glass surface: a blurred, saturated translucent panel with
+   a soft top highlight to read as refractive glass rather than flat frost. */
+.glass-surface {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    0 12px 32px rgba(10, 12, 30, 0.28),
+    inset 0 1px 0 var(--glass-highlight);
 }
 
 @media (prefers-reduced-motion: reduce) {
