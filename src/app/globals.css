@@ -17,6 +17,14 @@
   --pink-ink: #c94d84;
 
   --dark: #14161b;
+
+  /* Status semantics — deliberately distinct from the blue accent hue */
+  --status-good: #1fa971;
+  --status-good-soft: #e1f7ea;
+  --status-warn: #c98a1c;
+  --status-warn-soft: #fbf0dc;
+  --status-muted: #8a8f9b;
+  --status-muted-soft: #eef0f4;
   --dark-2: #24262d;
 
   /* Liquid-glass bottom nav */

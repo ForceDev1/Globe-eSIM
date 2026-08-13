@@ -2,11 +2,11 @@
 
 import { House, CardSim, Globe, UserRound } from "lucide-react";
 
-type NavTab = "home" | "esims" | "explore" | "profile";
+export type NavTab = "home" | "esims" | "explore" | "profile";
 
 type BottomNavProps = {
   active: NavTab;
-  onExplore: () => void;
+  onSelect: (tab: NavTab) => void;
 };
 
 const items: {
@@ -24,7 +24,7 @@ const items: {
  * Fixed, frosted "liquid glass" tab bar: a blurred translucent panel with a
  * soft top highlight, floating above content regardless of scroll position.
  */
-export default function BottomNav({ active, onExplore }: BottomNavProps) {
+export default function BottomNav({ active, onSelect }: BottomNavProps) {
   return (
     <nav
       className="glass-surface fixed left-1/2 z-40 flex w-[calc(100%-40px)] max-w-[380px] -translate-x-1/2 items-center justify-between rounded-full px-3 py-2"
@@ -38,7 +38,7 @@ export default function BottomNav({ active, onExplore }: BottomNavProps) {
             type="button"
             aria-label={label}
             aria-current={isActive ? "page" : undefined}
-            onClick={key === "explore" ? onExplore : undefined}
+            onClick={() => onSelect(key)}
             className="relative flex h-11 w-11 items-center justify-center rounded-full"
           >
             {isActive && (
