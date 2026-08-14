@@ -1,46 +1,60 @@
 @import "tailwindcss";
 
 :root {
-  --page-bg: #f4f6fb;
-  --header-wash: #e7f0ff;
-  --card-bg: #ffffff;
-  --ink: #14161b;
-  --ink-soft: #8a8f9b;
-  --hairline: rgba(20, 20, 30, 0.07);
-  --shadow-card: 0 10px 28px rgba(20, 24, 60, 0.07);
+  /* Deep, near-black stage — vivid gradient cards carry the color, the
+     surrounding chrome stays quiet so they read as glowing. */
+  --page-bg: #08080a;
+  --surface: #111114;
+  --surface-2: #1a1a1e;
+  --card-bg: #111114;
+  --ink: #f5f5f7;
+  --ink-soft: #8e8e96;
+  --ink-faint: #56565e;
+  --hairline: rgba(255, 255, 255, 0.08);
+  --shadow-card: 0 16px 34px rgba(0, 0, 0, 0.45);
 
-  --accent: #3d7bff;
-  --accent-2: #6fa2ff;
-  --accent-soft: rgba(61, 123, 255, 0.12);
+  --dark: #1c1c20; /* raised, dark-on-dark pill fill — reference's quiet
+                       CTA style, distinguished by its trailing icon badge
+                       rather than a loud fill color */
+  --accent: #6f8bff;
+  --accent-2: #93a8ff;
+  --accent-soft: rgba(111, 139, 255, 0.16);
+  --mark: #e3ff5c; /* lime marker: ticks, pointers, chart highlights */
 
-  --pink: #fbdcea;
-  --pink-ink: #c94d84;
+  /* Status semantics — deliberately distinct from the accent hue */
+  --status-good: #35e0a1;
+  --status-good-soft: rgba(53, 224, 161, 0.14);
+  --status-warn: #ffcf5c;
+  --status-warn-soft: rgba(255, 207, 92, 0.14);
+  --status-muted: #8e8e96;
+  --status-muted-soft: rgba(142, 142, 150, 0.14);
 
-  --dark: #14161b;
-
-  /* Status semantics — deliberately distinct from the blue accent hue */
-  --status-good: #1fa971;
-  --status-good-soft: #e1f7ea;
-  --status-warn: #c98a1c;
-  --status-warn-soft: #fbf0dc;
-  --status-muted: #8a8f9b;
-  --status-muted-soft: #eef0f4;
-  --dark-2: #24262d;
+  /* Glow-card palette — each metric gets its own radial identity, edges
+     always resolving back to the page black so cards feel lit, not painted. */
+  --glow-pink: radial-gradient(120% 130% at 28% 15%, #ff3f8f 0%, #5c1140 42%, #0d0a0e 78%);
+  --glow-pink-ink: #ffd3e8;
+  --glow-green: radial-gradient(120% 130% at 28% 15%, #2bdc8f 0%, #0f3d2c 42%, #0a0e0c 78%);
+  --glow-green-ink: #c9ffe6;
+  --glow-blue: radial-gradient(120% 130% at 28% 15%, #3f6bff 0%, #14204f 42%, #0a0b0e 78%);
+  --glow-blue-ink: #d6ddff;
+  --glow-orange: radial-gradient(120% 130% at 28% 15%, #ff6a3d 0%, #5c2510 42%, #0e0a0a 78%);
+  --glow-orange-ink: #ffe0d1;
 
   /* Liquid-glass bottom nav */
-  --glass-bg: rgba(18, 19, 24, 0.55);
-  --glass-border: rgba(255, 255, 255, 0.16);
-  --glass-highlight: rgba(255, 255, 255, 0.22);
-  --glass-bubble: rgba(255, 255, 255, 0.18);
+  --glass-bg: rgba(18, 19, 24, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --glass-highlight: rgba(255, 255, 255, 0.2);
+  --glass-bubble: rgba(255, 255, 255, 0.16);
 
-  /* Launch intro — a deliberately warmer, quieter palette than the in-app
-     blue accent; a splash moment, not a UI screen. */
-  --intro-bg: #fbf1ea;
-  --intro-ink: #241f1d;
-  --intro-ink-soft: #8a7e78;
+  /* Launch intro — same near-black stage as the app now, so the splash
+     resolves into Home without a jarring light-to-dark cut. The orb stays
+     a pale, glowing "glass" surface either way. */
+  --intro-bg: #08080a;
+  --intro-ink: #f5f5f7;
+  --intro-ink-soft: #8e8e96;
   --intro-orb: #fffbf8;
   --intro-orb-shadow:
-    0 14px 34px rgba(60, 40, 30, 0.14),
+    0 14px 34px rgba(0, 0, 0, 0.55),
     inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
@@ -69,6 +83,23 @@ body {
   box-shadow:
     0 12px 32px rgba(10, 12, 30, 0.28),
     inset 0 1px 0 var(--glass-highlight);
+}
+
+/* Dot-matrix hero numbers */
+.dot-matrix {
+  display: inline-grid;
+  grid-auto-flow: column;
+  gap: 0.16em;
+}
+
+.dot-matrix-digit {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(7, 1fr);
+}
+
+.dot-matrix-cell {
+  border-radius: 50%;
 }
 
 /* ------------------------------------------------------------------ */
@@ -107,7 +138,10 @@ body {
 .intro-chroma-layer--c {
   position: absolute;
   inset: 0;
-  mix-blend-mode: multiply;
+  /* screen (not multiply) — the intro stage is dark now, and multiply
+     against a near-black backdrop would crush the color out of the
+     fringe instead of letting it glow. */
+  mix-blend-mode: screen;
 }
 
 .intro-chroma-layer--a {

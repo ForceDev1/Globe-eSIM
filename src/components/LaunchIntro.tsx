@@ -327,8 +327,13 @@ export default function LaunchIntro({ onDone }: { onDone: () => void }) {
         <button
           type="button"
           onClick={handleContinue}
-          className="intro-fade-up fixed left-1/2 -translate-x-1/2 rounded-full px-8 py-4 text-[15px] font-semibold text-white"
-          style={{ top: `${ANCHOR_Y_FRACTION * 100}vh`, marginTop: 74, background: "var(--intro-ink)" }}
+          className="intro-fade-up fixed left-1/2 -translate-x-1/2 rounded-full px-8 py-4 text-[15px] font-semibold"
+          style={{
+            top: `${ANCHOR_Y_FRACTION * 100}vh`,
+            marginTop: 74,
+            background: "var(--dark)",
+            color: "var(--intro-ink)",
+          }}
         >
           Get Started
         </button>

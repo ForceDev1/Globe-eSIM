@@ -56,7 +56,7 @@ function FieldRow({
         aria-label={`Copy ${label}`}
         className="ml-3 flex h-9 w-9 shrink-0 items-center justify-center rounded-full"
         style={{
-          background: copied ? "var(--status-good-soft)" : "#f0f2f7",
+          background: copied ? "var(--status-good-soft)" : "var(--surface-2)",
           color: copied ? "var(--status-good)" : "var(--ink-soft)",
         }}
       >
@@ -185,7 +185,7 @@ export default function InstallSheet({ open, esim, onClose, onInstalled }: Insta
         }`}
         style={{ maxHeight: "88vh" }}
       >
-        <div className="mx-auto h-1 w-9 shrink-0 rounded-full bg-black/10" />
+        <div className="mx-auto h-1 w-9 shrink-0 rounded-full bg-white/15" />
 
         <div className="flex items-center justify-between px-5 pt-4">
           <div>
@@ -201,18 +201,23 @@ export default function InstallSheet({ open, esim, onClose, onInstalled }: Insta
             type="button"
             onClick={handleClose}
             aria-label="Close"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#f0f2f7] text-[var(--ink)]"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[var(--ink)]"
+            style={{ background: "var(--surface-2)" }}
           >
             <X size={16} strokeWidth={2} />
           </button>
         </div>
 
         <div className="px-5 pt-4">
-          <div className="relative grid grid-cols-3 rounded-2xl bg-[#f0f2f7] p-1">
+          <div className="relative grid grid-cols-3 rounded-2xl p-1" style={{ background: "var(--surface-2)" }}>
             <span
               aria-hidden
-              className="absolute inset-y-1 rounded-xl bg-white shadow-sm transition-transform duration-200 ease-out"
-              style={{ width: "calc(100% / 3)", transform: `translateX(${activeIndex * 100}%)` }}
+              className="absolute inset-y-1 rounded-xl transition-transform duration-200 ease-out"
+              style={{
+                width: "calc(100% / 3)",
+                transform: `translateX(${activeIndex * 100}%)`,
+                background: "rgba(255,255,255,0.1)",
+              }}
             />
             {METHODS.map(({ key, label, icon: Icon }) => (
               <button
@@ -249,7 +254,7 @@ export default function InstallSheet({ open, esim, onClose, onInstalled }: Insta
                   type="button"
                   onClick={startQuickInstall}
                   disabled={quickState !== "idle"}
-                  className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-[15px] font-semibold text-white disabled:opacity-80"
+                  className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-[15px] font-semibold text-[var(--ink)] disabled:opacity-80"
                   style={{
                     background: quickState === "done" ? "var(--status-good)" : "var(--dark)",
                   }}
@@ -295,7 +300,7 @@ export default function InstallSheet({ open, esim, onClose, onInstalled }: Insta
                 <button
                   type="button"
                   onClick={confirmInstalled}
-                  className="mt-5 w-full rounded-2xl py-4 text-[15px] font-semibold text-white"
+                  className="mt-5 w-full rounded-2xl py-4 text-[15px] font-semibold text-[var(--ink)]"
                   style={{ background: "var(--dark)" }}
                 >
                   I&rsquo;ve installed it
@@ -306,8 +311,8 @@ export default function InstallSheet({ open, esim, onClose, onInstalled }: Insta
             {method === "qr" && (
               <div className="flex flex-col items-center px-1 py-6 text-center">
                 <div
-                  className="flex h-[236px] w-[236px] items-center justify-center rounded-2xl border"
-                  style={{ borderColor: "var(--hairline)" }}
+                  className="flex h-[236px] w-[236px] items-center justify-center rounded-2xl"
+                  style={{ background: "#fff" }}
                 >
                   {qrSvg ? (
                     <div
@@ -315,7 +320,7 @@ export default function InstallSheet({ open, esim, onClose, onInstalled }: Insta
                       dangerouslySetInnerHTML={{ __html: qrSvg }}
                     />
                   ) : (
-                    <Loader2 size={22} strokeWidth={2} className="animate-spin text-[var(--ink-soft)]" />
+                    <Loader2 size={22} strokeWidth={2} className="animate-spin text-[#8e8e96]" />
                   )}
                 </div>
                 <p className="mt-4 text-[13px] text-[var(--ink-soft)]">
@@ -324,7 +329,7 @@ export default function InstallSheet({ open, esim, onClose, onInstalled }: Insta
                 <button
                   type="button"
                   onClick={confirmInstalled}
-                  className="mt-5 w-full rounded-2xl py-4 text-[15px] font-semibold text-white"
+                  className="mt-5 w-full rounded-2xl py-4 text-[15px] font-semibold text-[var(--ink)]"
                   style={{ background: "var(--dark)" }}
                 >
                   I&rsquo;ve scanned it

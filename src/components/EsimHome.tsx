@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import BottomNav, { type NavTab } from "@/components/BottomNav";
 import HomeView from "@/components/HomeView";
 import MyEsimsView from "@/components/MyEsimsView";
+import UsageView from "@/components/UsageView";
 import CountrySheet from "@/components/CountrySheet";
 import PlanSheet from "@/components/PlanSheet";
 import TopUpSheet from "@/components/TopUpSheet";
@@ -27,6 +28,8 @@ export default function EsimHome() {
   const [installOpen, setInstallOpen] = useState(false);
   const [installEsim, setInstallEsim] = useState<OwnedEsim | null>(null);
 
+  const [usageEsim, setUsageEsim] = useState<OwnedEsim | null>(null);
+
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
@@ -47,6 +50,7 @@ export default function EsimHome() {
       return;
     }
     if (tab === "home" || tab === "esims") {
+      setUsageEsim(null);
       setActiveTab(tab);
     }
     // "profile" has no dedicated screen yet.
@@ -102,29 +106,27 @@ export default function EsimHome() {
   }
 
   return (
-    <div className="flex min-h-screen justify-center bg-[var(--page-bg)]">
-      <div
-        className="flex w-full max-w-[420px] flex-col pb-32"
-        style={{
-          background: "linear-gradient(180deg, var(--header-wash) 0%, var(--page-bg) 300px)",
-        }}
-      >
+    <div className="flex min-h-screen justify-center" style={{ background: "var(--page-bg)" }}>
+      <div className="flex w-full max-w-[420px] flex-col pb-32">
         {/* Toast */}
         <div
           role="status"
           aria-live="polite"
-          className={`fixed left-1/2 z-[60] w-[calc(100%-40px)] max-w-[380px] -translate-x-1/2 rounded-2xl px-4 py-3 text-center text-[14px] font-medium text-white shadow-lg transition-all duration-300 ${
+          className={`fixed left-1/2 z-[60] w-[calc(100%-40px)] max-w-[380px] -translate-x-1/2 rounded-2xl px-4 py-3 text-center text-[14px] font-medium shadow-lg transition-all duration-300 ${
             toast ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-3 opacity-0"
           }`}
           style={{
             top: "calc(env(safe-area-inset-top, 0px) + 16px)",
-            background: "var(--dark)",
+            background: "var(--surface-2)",
+            color: "var(--ink)",
           }}
         >
           {toast}
         </div>
 
-        {activeTab === "home" ? (
+        {usageEsim ? (
+          <UsageView esim={usageEsim} onBack={() => setUsageEsim(null)} />
+        ) : activeTab === "home" ? (
           <HomeView
             balance={balance}
             onSearch={() => setCountrySheetOpen(true)}
@@ -136,6 +138,7 @@ export default function EsimHome() {
           <MyEsimsView
             esims={esims}
             onInstall={handleInstallRequest}
+            onViewUsage={(esim) => setUsageEsim(esim)}
             onAddNew={() => setCountrySheetOpen(true)}
           />
         )}

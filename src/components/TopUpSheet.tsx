@@ -90,10 +90,10 @@ export default function TopUpSheet({ open, balance, onClose, onConfirm }: TopUpS
         }`}
         style={{ maxHeight: "88vh" }}
       >
-        <div className="mx-auto h-1 w-9 shrink-0 rounded-full bg-black/10" />
+        <div className="mx-auto h-1 w-9 shrink-0 rounded-full bg-white/15" />
 
         <div className="min-h-0 flex-1 overflow-y-auto px-5 pt-4">
-          <div className="flex items-center justify-between rounded-2xl bg-[#f0f2f7] px-4 py-3.5">
+          <div className="flex items-center justify-between rounded-2xl px-4 py-3.5" style={{ background: "var(--surface-2)" }}>
             <div className="flex items-center gap-3">
               <span
                 className="flex h-9 w-9 items-center justify-center rounded-full"
@@ -112,8 +112,8 @@ export default function TopUpSheet({ open, balance, onClose, onConfirm }: TopUpS
 
           <div className="mt-3 flex items-center justify-between rounded-2xl border px-4 py-3.5" style={{ borderColor: "var(--hairline)" }}>
             <div className="flex items-center gap-3">
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--ink)]">
-                <CreditCard size={16} strokeWidth={2} className="text-white" />
+              <span className="flex h-9 w-9 items-center justify-center rounded-full" style={{ background: "var(--surface-2)" }}>
+                <CreditCard size={16} strokeWidth={2} className="text-[var(--ink)]" />
               </span>
               <div>
                 <p className="text-[12px] text-[var(--ink-soft)]">Debit</p>
@@ -173,8 +173,8 @@ export default function TopUpSheet({ open, balance, onClose, onConfirm }: TopUpS
                     aria-pressed={isSelected}
                     className="rounded-xl py-2.5 text-[13px] font-semibold"
                     style={{
-                      background: isSelected ? "var(--ink)" : "#f0f2f7",
-                      color: isSelected ? "#fff" : "var(--ink)",
+                      background: isSelected ? "#fff" : "var(--surface-2)",
+                      color: isSelected ? "#0a0a0c" : "var(--ink)",
                     }}
                   >
                     ${String(value).padStart(2, "0")}
@@ -184,7 +184,7 @@ export default function TopUpSheet({ open, balance, onClose, onConfirm }: TopUpS
               <button
                 type="button"
                 className="rounded-xl py-2.5 text-[13px] font-semibold"
-                style={{ background: "#f0f2f7", color: "var(--ink)" }}
+                style={{ background: "var(--surface-2)", color: "var(--ink)" }}
               >
                 Other
               </button>
@@ -200,7 +200,7 @@ export default function TopUpSheet({ open, balance, onClose, onConfirm }: TopUpS
             type="button"
             onClick={onClose}
             className="flex-1 rounded-2xl py-4 text-center text-[15px] font-semibold text-[var(--ink)]"
-            style={{ background: "#f0f2f7" }}
+            style={{ background: "var(--surface-2)" }}
           >
             Cancel
           </button>
@@ -209,7 +209,7 @@ export default function TopUpSheet({ open, balance, onClose, onConfirm }: TopUpS
             onPointerDown={startHold}
             onPointerUp={() => holding && stopHold(false)}
             onPointerLeave={() => holding && stopHold(false)}
-            className="relative flex-[1.6] overflow-hidden rounded-2xl py-4 text-center text-[15px] font-semibold text-white select-none"
+            className="relative flex-[1.6] overflow-hidden rounded-2xl py-4 text-center text-[15px] font-semibold text-[var(--ink)] select-none"
             style={{ background: "var(--dark)" }}
           >
             <span

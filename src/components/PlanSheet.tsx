@@ -108,7 +108,7 @@ export default function PlanSheet({
                     borderWidth: isSelected ? 2 : 1,
                   }}
                 >
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f0f2f7]">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full" style={{ background: "var(--surface-2)" }}>
                     <Signal size={17} strokeWidth={2} className="text-[var(--ink)]" />
                   </span>
                   <span className="min-w-0 flex-1">
@@ -129,14 +129,14 @@ export default function PlanSheet({
 
           <div
             className="mt-4 flex items-center gap-3 rounded-2xl p-4"
-            style={{ background: "var(--pink)" }}
+            style={{ background: "var(--glow-pink)" }}
           >
-            <Gift size={26} strokeWidth={1.8} style={{ color: "var(--pink-ink)" }} />
+            <Gift size={26} strokeWidth={1.8} style={{ color: "var(--glow-pink-ink)" }} />
             <div className="min-w-0 flex-1">
-              <p className="text-[14px] font-bold" style={{ color: "var(--pink-ink)" }}>
+              <p className="text-[14px] font-bold" style={{ color: "var(--glow-pink-ink)" }}>
                 25% Gift Balance
               </p>
-              <p className="text-[12px]" style={{ color: "var(--pink-ink)", opacity: 0.85 }}>
+              <p className="text-[12px]" style={{ color: "var(--glow-pink-ink)", opacity: 0.85 }}>
                 With every purchase
               </p>
             </div>
@@ -180,7 +180,7 @@ export default function PlanSheet({
           <button
             type="button"
             onClick={() => onCheckout({ country, planId, quantity })}
-            className="w-full rounded-2xl py-4 text-center text-[16px] font-semibold text-white"
+            className="w-full rounded-2xl py-4 text-center text-[16px] font-semibold text-[var(--ink)]"
             style={{ background: "var(--dark)" }}
           >
             Checkout ${total.toFixed(2)} USD

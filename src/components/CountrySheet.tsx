@@ -51,7 +51,7 @@ export default function CountrySheet({ open, onClose, onSelect }: CountrySheetPr
         }`}
         style={{ maxHeight: "82vh" }}
       >
-        <div className="mx-auto h-1 w-9 shrink-0 rounded-full bg-black/10" />
+        <div className="mx-auto h-1 w-9 shrink-0 rounded-full bg-white/15" />
 
         <div className="flex items-center justify-between px-5 pt-4">
           <h2 className="text-[19px] font-semibold text-[var(--ink)]">
@@ -61,14 +61,15 @@ export default function CountrySheet({ open, onClose, onSelect }: CountrySheetPr
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f0f2f7] text-[var(--ink)]"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-[var(--ink)]"
+            style={{ background: "var(--surface-2)" }}
           >
             <X size={16} strokeWidth={2} />
           </button>
         </div>
 
         <div className="px-5 pt-4">
-          <div className="flex items-center gap-2 rounded-2xl bg-[#f0f2f7] px-4 py-3">
+          <div className="flex items-center gap-2 rounded-2xl px-4 py-3" style={{ background: "var(--surface-2)" }}>
             <Search size={17} strokeWidth={2} className="text-[var(--ink-soft)]" />
             <input
               value={query}
@@ -92,7 +93,7 @@ export default function CountrySheet({ open, onClose, onSelect }: CountrySheetPr
               <button
                 type="button"
                 onClick={() => onSelect(country)}
-                className="flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left active:bg-[#f0f2f7]"
+                className="flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left active:bg-white/5"
               >
                 <span className="text-[24px] leading-none">
                   {flagEmoji(country.code)}
@@ -105,7 +106,7 @@ export default function CountrySheet({ open, onClose, onSelect }: CountrySheetPr
                     from ${country.price}
                   </span>
                 </span>
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#f0f2f7] text-[var(--ink-soft)]">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[var(--ink-soft)]" style={{ background: "var(--surface-2)" }}>
                   <ChevronRight size={15} strokeWidth={2} />
                 </span>
               </button>
