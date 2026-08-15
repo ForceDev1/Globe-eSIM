@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { hapticTick } from "@/lib/haptics";
 import HelloVariant1 from "./HelloVariant1";
 import HelloVariant2 from "./HelloVariant2";
 import HelloVariant3 from "./HelloVariant3";
@@ -25,6 +26,14 @@ export default function HelloTestHarness() {
   const active = VARIANTS.find((v) => v.key === variant)!;
 
   function play(key: (typeof VARIANTS)[number]["key"]) {
+    // Fired synchronously inside the click handler — outside Telegram this
+    // is the one haptic call in the whole sequence guaranteed to land
+    // inside a browser's "recent user gesture" window for navigator.vibrate.
+    // Everything later in the sequence runs off setTimeout, which most
+    // browsers no longer treat as gesture-adjacent (and iOS Safari doesn't
+    // implement the Vibration API at all) — real per-word haptics are only
+    // reliable inside an actual Telegram Mini App.
+    hapticTick("light");
     setVariant(key);
     setDone(false);
     setRunId((n) => n + 1);
