@@ -4,10 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { HELLO_WORLD } from "@/data/helloWords";
 import { hapticTick, hapticSuccess } from "@/lib/haptics";
 
-const WORD_HOLD_MS = 560;
-const EXIT_MS = 260;
-const FINAL_HOLD_MS = 900;
-const STAGE_EXIT_MS = 520;
+const WORD_HOLD_MS = 950;
+const EXIT_MS = 380;
+const FINAL_HOLD_MS = 1500;
+const STAGE_EXIT_MS = 700;
 
 /**
  * "Classic Boot" — the reference: each word fades up from a blur with a

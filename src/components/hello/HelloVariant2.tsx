@@ -5,10 +5,10 @@ import { useEffect, useRef, useState } from "react";
 import { HELLO_LATIN } from "@/data/helloWords";
 import { hapticTick, hapticSuccess } from "@/lib/haptics";
 
-const STEP_MS = 640;
-const LETTER_MS = 55;
-const FINAL_HOLD_MS = 900;
-const STAGE_EXIT_MS = 520;
+const STEP_MS = 1050;
+const LETTER_MS = 85;
+const FINAL_HOLD_MS = 1500;
+const STAGE_EXIT_MS = 700;
 
 // Deterministic pseudo-random in [0, 1) — same seed always gives the same
 // value, so server and client render identically (no hydration mismatch).
@@ -58,7 +58,7 @@ export default function HelloVariant2({ onDone }: { onDone: () => void }) {
             const jitter = seededJitter(index * 31 + i + 1);
             const rot = (jitter - 0.5) * 16;
             const style: CSSProperties & Record<"--delay" | "--rot", string> = {
-              "--delay": `${i * LETTER_MS + jitter * 45}ms`,
+              "--delay": `${i * LETTER_MS + jitter * 65}ms`,
               "--rot": `${rot}deg`,
             };
             return (

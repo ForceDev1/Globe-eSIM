@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { HELLO_LATIN } from "@/data/helloWords";
 import { hapticTick, hapticSuccess } from "@/lib/haptics";
 
-const STEP_MS = 560;
-const FINAL_HOLD_MS = 900;
-const STAGE_EXIT_MS = 520;
+const STEP_MS = 950;
+const FINAL_HOLD_MS = 1500;
+const STAGE_EXIT_MS = 700;
 
 /**
  * "Ink Reveal" — a cursive word is wiped into view left-to-right by an
