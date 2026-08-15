@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
 import { HELLO_LATIN } from "@/data/helloWords";
 import { hapticTick, hapticSuccess } from "@/lib/haptics";
+import SkipHint from "./SkipHint";
 
 const STEP_MS = 1050;
 const LETTER_MS = 85;
@@ -47,11 +48,20 @@ export default function HelloVariant2({ onDone }: { onDone: () => void }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function skip() {
+    if (exiting) return;
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+    hapticTick("light");
+    setExiting(true);
+    timers.current.push(setTimeout(onDone, STAGE_EXIT_MS));
+  }
+
   const word = HELLO_LATIN[index];
   const letters = word.split("");
 
   return (
-    <div className={`hello-stage ${exiting ? "exiting" : ""}`}>
+    <div className={`hello-stage ${exiting ? "exiting" : ""}`} onClick={skip}>
       <div className="hello-word-slot">
         <span key={index} className="hand-word">
           {letters.map((ch, i) => {
@@ -69,6 +79,7 @@ export default function HelloVariant2({ onDone }: { onDone: () => void }) {
           })}
         </span>
       </div>
+      <SkipHint />
     </div>
   );
 }

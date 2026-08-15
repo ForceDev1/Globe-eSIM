@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { HELLO_WORLD } from "@/data/helloWords";
 import { hapticTick, hapticSuccess } from "@/lib/haptics";
+import SkipHint from "./SkipHint";
 
 const WORD_HOLD_MS = 950;
 const EXIT_MS = 380;
@@ -49,15 +50,25 @@ export default function HelloVariant3({ onDone }: { onDone: () => void }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function skip() {
+    if (exiting) return;
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+    hapticTick("light");
+    setExiting(true);
+    timers.current.push(setTimeout(onDone, STAGE_EXIT_MS));
+  }
+
   const word = HELLO_WORLD[index];
 
   return (
-    <div className={`hello-stage ${exiting ? "exiting" : ""}`}>
+    <div className={`hello-stage ${exiting ? "exiting" : ""}`} onClick={skip}>
       <div className="hello-word-slot">
         <span key={index} className={`boot-word ${leaving ? "leaving" : ""}`}>
           {word}
         </span>
       </div>
+      <SkipHint />
     </div>
   );
 }
