@@ -41,14 +41,24 @@ body {
   cursor: pointer;
 }
 
-.hold-sparkle {
+.hold-sparkle,
+.text-sparkle {
   position: fixed;
   border-radius: 999px;
   background: rgba(226, 226, 232, 0.85);
   box-shadow: 0 0 8px 2px rgba(226, 226, 232, 0.5);
   transform: translate(-50%, -50%);
   pointer-events: none;
+}
+
+.hold-sparkle {
   animation: sparkleFly 700ms ease-out forwards;
+}
+
+/* Slower, lazier drift than the hold-to-skip burst — this one's ambient,
+   not a countdown, so it reads as floating rather than shooting. */
+.text-sparkle {
+  animation: sparkleFly 1600ms ease-out forwards;
 }
 
 @keyframes sparkleFly {
@@ -235,7 +245,8 @@ body {
   .ink-tip,
   .hand-letter,
   .boot-word,
-  .hold-sparkle {
+  .hold-sparkle,
+  .text-sparkle {
     animation-duration: 0.01ms !important;
   }
 }

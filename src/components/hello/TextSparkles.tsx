@@ -3,21 +3,22 @@
 import type { CSSProperties, RefObject } from "react";
 import { useEffect, useRef, useState } from "react";
 
-const SPAWN_INTERVAL_MS = 90;
+const SPAWN_INTERVAL_MS = 150;
 const RAY_COUNT = 9;
-const LIFE_MS = 750;
+const LIFE_MS = 1650; // must stay >= the .text-sparkle CSS animation duration
 
 type Sparkle = { id: number; x: number; y: number; dx: number; dy: number; size: number };
 
 let sparkleSeq = 0;
 
 /**
- * Ambient decoration: reuses the exact same particle (.hold-sparkle /
- * sparkleFly) as the press-and-hold skip gesture, but sourced from the
- * greeting word's own bounding box instead of a fingertip — a handful of
- * evenly-spaced rays (randomly rotated so it's not identical every time)
- * radiate outward continuously while the word is on screen, reading as
- * streaks rather than a random scatter.
+ * Ambient decoration: the same particle look as the press-and-hold skip
+ * gesture (.text-sparkle shares color/shape with .hold-sparkle, just a
+ * slower drift — this is ambient, not a countdown), sourced from the
+ * greeting word's own bounding box instead of a fingertip. Particles fire
+ * along a handful of evenly-spaced rays (randomly rotated so it's not
+ * identical every time), radiating outward continuously while the word is
+ * on screen, reading as streaks rather than a random scatter.
  */
 export default function TextSparkles({
   targetRef,
@@ -83,7 +84,7 @@ export default function TextSparkles({
           "--dx": `${s.dx}px`,
           "--dy": `${s.dy}px`,
         };
-        return <span key={s.id} className="hold-sparkle" style={style} aria-hidden />;
+        return <span key={s.id} className="text-sparkle" style={style} aria-hidden />;
       })}
     </>
   );

@@ -8,6 +8,10 @@ type ImpactStyle = "light" | "medium" | "heavy" | "rigid" | "soft";
 type TelegramWebApp = {
   ready?: () => void;
   expand?: () => void;
+  // Bot API 8.0+ — true edge-to-edge fullscreen (extends behind the system
+  // status bar/notch), distinct from expand() which only maximizes the
+  // webview within Telegram's own chrome. Undefined on older clients.
+  requestFullscreen?: () => void;
   HapticFeedback?: {
     impactOccurred: (style: ImpactStyle) => void;
     notificationOccurred: (type: "error" | "success" | "warning") => void;
@@ -27,11 +31,15 @@ function webApp(): TelegramWebApp | undefined {
 }
 
 /** Call once on mount: tells Telegram the app is ready (drops its loading
- * spinner) and expands the webview to full height. No-op outside Telegram. */
+ * spinner), expands the webview to full height, and — on clients that
+ * support it — requests true edge-to-edge fullscreen. No-op outside
+ * Telegram, and requestFullscreen itself no-ops on older clients that
+ * don't have it. */
 export function initTelegramWebApp() {
   const tg = webApp();
   tg?.ready?.();
   tg?.expand?.();
+  tg?.requestFullscreen?.();
 }
 
 const VIBRATE_MS: Record<ImpactStyle, number> = {
