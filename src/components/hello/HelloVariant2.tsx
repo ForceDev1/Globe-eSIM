@@ -4,7 +4,7 @@ import type { CSSProperties } from "react";
 import { useEffect, useRef, useState } from "react";
 import { HELLO_LATIN } from "@/data/helloWords";
 import { hapticTick, hapticSuccess } from "@/lib/haptics";
-import SkipHint from "./SkipHint";
+import HoldToSkip from "./HoldToSkip";
 
 const STEP_MS = 1050;
 const LETTER_MS = 85;
@@ -61,7 +61,7 @@ export default function HelloVariant2({ onDone }: { onDone: () => void }) {
   const letters = word.split("");
 
   return (
-    <div className={`hello-stage ${exiting ? "exiting" : ""}`} onClick={skip}>
+    <div className={`hello-stage ${exiting ? "exiting" : ""}`}>
       <div className="hello-word-slot">
         <span key={index} className="hand-word">
           {letters.map((ch, i) => {
@@ -79,7 +79,7 @@ export default function HelloVariant2({ onDone }: { onDone: () => void }) {
           })}
         </span>
       </div>
-      <SkipHint />
+      <HoldToSkip onSkip={skip} />
     </div>
   );
 }

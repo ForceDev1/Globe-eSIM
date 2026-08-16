@@ -16,7 +16,6 @@ body {
   align-items: center;
   justify-content: center;
   background: #000;
-  cursor: pointer;
   transition: opacity 700ms ease, transform 700ms ease;
 }
 
@@ -31,6 +30,39 @@ body {
   color: rgba(255, 255, 255, 0.3);
   font-size: 12px;
   pointer-events: none;
+}
+
+.hold-skip-layer {
+  position: absolute;
+  inset: 0;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
+}
+
+.hold-sparkle {
+  position: fixed;
+  border-radius: 999px;
+  background: rgba(198, 198, 206, 0.55);
+  box-shadow: 0 0 6px 1px rgba(198, 198, 206, 0.3);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: sparkleFly 700ms ease-out forwards;
+}
+
+@keyframes sparkleFly {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  22% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1);
+  }
 }
 
 .hello-stage.exiting {
@@ -202,7 +234,8 @@ body {
   .ink-word,
   .ink-tip,
   .hand-letter,
-  .boot-word {
+  .boot-word,
+  .hold-sparkle {
     animation-duration: 0.01ms !important;
   }
 }
