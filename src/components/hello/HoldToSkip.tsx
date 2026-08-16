@@ -4,10 +4,11 @@ import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 import { hapticTick, hapticSuccess } from "@/lib/haptics";
 
-const HOLD_MS = 650;
-const SPARKLE_INTERVAL_MS = 70;
+const HOLD_MS = 1000;
+const SPARKLE_INTERVAL_MS = 40;
+const SPARKLES_PER_TICK = 2;
 const SPARKLE_LIFE_MS = 700;
-const HAPTIC_INTERVAL_MS = 95;
+const HAPTIC_INTERVAL_MS = 50;
 
 type Sparkle = { id: number; x: number; y: number; dx: number; dy: number; size: number };
 
@@ -40,18 +41,21 @@ export default function HoldToSkip({ onSkip }: { onSkip: () => void }) {
 
   useEffect(() => clearTimers, []);
 
-  function spawnSparkle() {
+  function spawnSparkles() {
     const { x, y } = pointerRef.current;
-    const angle = Math.random() * Math.PI * 2;
-    const dist = 18 + Math.random() * 46;
-    const id = sparkleSeq++;
-    setSparkles((list) => [
-      ...list.slice(-28),
-      { id, x, y, dx: Math.cos(angle) * dist, dy: Math.sin(angle) * dist, size: 2 + Math.random() * 3 },
-    ]);
-    setTimeout(() => {
-      setSparkles((list) => list.filter((s) => s.id !== id));
-    }, SPARKLE_LIFE_MS);
+    const fresh: Sparkle[] = [];
+    for (let i = 0; i < SPARKLES_PER_TICK; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 16 + Math.random() * 52;
+      const id = sparkleSeq++;
+      fresh.push({ id, x, y, dx: Math.cos(angle) * dist, dy: Math.sin(angle) * dist, size: 3 + Math.random() * 4 });
+    }
+    setSparkles((list) => [...list.slice(-60), ...fresh]);
+    fresh.forEach(({ id }) => {
+      setTimeout(() => {
+        setSparkles((list) => list.filter((s) => s.id !== id));
+      }, SPARKLE_LIFE_MS);
+    });
   }
 
   function endHold() {
@@ -65,7 +69,7 @@ export default function HoldToSkip({ onSkip }: { onSkip: () => void }) {
     triggeredRef.current = false;
     holdStartRef.current = performance.now();
 
-    sparkleTimerRef.current = setInterval(spawnSparkle, SPARKLE_INTERVAL_MS);
+    sparkleTimerRef.current = setInterval(spawnSparkles, SPARKLE_INTERVAL_MS);
     hapticTimerRef.current = setInterval(() => hapticTick("light"), HAPTIC_INTERVAL_MS);
 
     const tick = (now: number) => {
