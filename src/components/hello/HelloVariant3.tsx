@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { HELLO_WORLD } from "@/data/helloWords";
 import { hapticTick, hapticSuccess } from "@/lib/haptics";
 import HoldToSkip from "./HoldToSkip";
+import TextSparkles from "./TextSparkles";
 
 const WORD_HOLD_MS = 950;
 const EXIT_MS = 380;
@@ -21,6 +22,7 @@ export default function HelloVariant3({ onDone }: { onDone: () => void }) {
   const [leaving, setLeaving] = useState(false);
   const [exiting, setExiting] = useState(false);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const wordRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const push = (ms: number, fn: () => void) => timers.current.push(setTimeout(fn, ms));
@@ -64,10 +66,11 @@ export default function HelloVariant3({ onDone }: { onDone: () => void }) {
   return (
     <div className={`hello-stage ${exiting ? "exiting" : ""}`}>
       <div className="hello-word-slot">
-        <span key={index} className={`boot-word ${leaving ? "leaving" : ""}`}>
+        <span key={index} ref={wordRef} className={`boot-word ${leaving ? "leaving" : ""}`}>
           {word}
         </span>
       </div>
+      <TextSparkles targetRef={wordRef} active={!exiting} />
       <HoldToSkip onSkip={skip} />
     </div>
   );

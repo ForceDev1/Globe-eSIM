@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { HELLO_LATIN } from "@/data/helloWords";
 import { hapticTick, hapticSuccess } from "@/lib/haptics";
 import HoldToSkip from "./HoldToSkip";
+import TextSparkles from "./TextSparkles";
 
 const STEP_MS = 1050;
 const LETTER_MS = 85;
@@ -28,6 +29,7 @@ export default function HelloVariant2({ onDone }: { onDone: () => void }) {
   const [index, setIndex] = useState(0);
   const [exiting, setExiting] = useState(false);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const wordRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const push = (ms: number, fn: () => void) => timers.current.push(setTimeout(fn, ms));
@@ -63,7 +65,7 @@ export default function HelloVariant2({ onDone }: { onDone: () => void }) {
   return (
     <div className={`hello-stage ${exiting ? "exiting" : ""}`}>
       <div className="hello-word-slot">
-        <span key={index} className="hand-word">
+        <span key={index} ref={wordRef} className="hand-word">
           {letters.map((ch, i) => {
             const jitter = seededJitter(index * 31 + i + 1);
             const rot = (jitter - 0.5) * 16;
@@ -79,6 +81,7 @@ export default function HelloVariant2({ onDone }: { onDone: () => void }) {
           })}
         </span>
       </div>
+      <TextSparkles targetRef={wordRef} active={!exiting} />
       <HoldToSkip onSkip={skip} />
     </div>
   );

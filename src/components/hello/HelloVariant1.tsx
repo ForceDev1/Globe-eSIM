@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { HELLO_LATIN } from "@/data/helloWords";
 import { hapticTick, hapticSuccess } from "@/lib/haptics";
 import HoldToSkip from "./HoldToSkip";
+import TextSparkles from "./TextSparkles";
 
 const STEP_MS = 950;
 const FINAL_HOLD_MS = 1500;
@@ -19,6 +20,7 @@ export default function HelloVariant1({ onDone }: { onDone: () => void }) {
   const [index, setIndex] = useState(0);
   const [exiting, setExiting] = useState(false);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const wordRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     const push = (ms: number, fn: () => void) => timers.current.push(setTimeout(fn, ms));
@@ -56,6 +58,7 @@ export default function HelloVariant1({ onDone }: { onDone: () => void }) {
       <div className="hello-word-slot">
         <span
           key={index}
+          ref={wordRef}
           className="ink-word"
           style={isLast ? { fontSize: "clamp(56px, 18vw, 112px)" } : undefined}
         >
@@ -63,6 +66,7 @@ export default function HelloVariant1({ onDone }: { onDone: () => void }) {
         </span>
         <span key={`tip-${index}`} className="ink-tip" aria-hidden />
       </div>
+      <TextSparkles targetRef={wordRef} active={!exiting} />
       <HoldToSkip onSkip={skip} />
     </div>
   );
