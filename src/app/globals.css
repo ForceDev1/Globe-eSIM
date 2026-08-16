@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+html,
+body {
+  /* Complements disableVerticalSwipes() in haptics.ts: that turns off
+     Telegram's swipe-down-to-close gesture, this stops the browser's own
+     pull-to-refresh/rubber-band bounce outside Telegram — same class of
+     problem (a downward drag doing something other than the app's own
+     gesture), two different hosts. */
+  overscroll-behavior-y: none;
+}
+
 body {
   -webkit-font-smoothing: antialiased;
 }

@@ -12,6 +12,11 @@ type TelegramWebApp = {
   // status bar/notch), distinct from expand() which only maximizes the
   // webview within Telegram's own chrome. Undefined on older clients.
   requestFullscreen?: () => void;
+  // Bot API 7.7+ — by default, a downward swipe starting on the app's own
+  // content is Telegram's gesture for minimizing/closing the Mini App.
+  // This turns that off so swiping around inside the app (e.g. the
+  // press-and-hold gesture) can't accidentally collapse it.
+  disableVerticalSwipes?: () => void;
   HapticFeedback?: {
     impactOccurred: (style: ImpactStyle) => void;
     notificationOccurred: (type: "error" | "success" | "warning") => void;
@@ -31,15 +36,17 @@ function webApp(): TelegramWebApp | undefined {
 }
 
 /** Call once on mount: tells Telegram the app is ready (drops its loading
- * spinner), expands the webview to full height, and — on clients that
- * support it — requests true edge-to-edge fullscreen. No-op outside
- * Telegram, and requestFullscreen itself no-ops on older clients that
- * don't have it. */
+ * spinner), expands the webview to full height, requests true edge-to-edge
+ * fullscreen, and disables the swipe-down-to-close gesture so scrolling or
+ * dragging inside the app can't accidentally minimize it. No-op outside
+ * Telegram; each individual call no-ops on older clients missing that
+ * particular method. */
 export function initTelegramWebApp() {
   const tg = webApp();
   tg?.ready?.();
   tg?.expand?.();
   tg?.requestFullscreen?.();
+  tg?.disableVerticalSwipes?.();
 }
 
 const VIBRATE_MS: Record<ImpactStyle, number> = {
