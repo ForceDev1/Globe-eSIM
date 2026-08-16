@@ -4,39 +4,42 @@ import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 import { hapticTick, hapticSuccess } from "@/lib/haptics";
 
-const HOLD_MS = 1000;
-const SPARKLE_INTERVAL_MS = 40;
+const HOLD_MS = 1500;
+// Both rattle and sparkles start slow and ramp up the longer you hold —
+// interval shrinks from *_START to *_END, eased so it stays close to the
+// start for a while before racing toward the end (a "winding up" feel
+// rather than a linear one).
+const HAPTIC_START_MS = 150;
+const HAPTIC_END_MS = 28;
+const SPARKLE_START_MS = 100;
+const SPARKLE_END_MS = 20;
 const SPARKLES_PER_TICK = 2;
 const SPARKLE_LIFE_MS = 700;
-const HAPTIC_INTERVAL_MS = 50;
 
 type Sparkle = { id: number; x: number; y: number; dx: number; dy: number; size: number };
 
 let sparkleSeq = 0;
 
 /**
- * Full-stage press-and-hold layer: hold anywhere for HOLD_MS to skip the
- * rest of the sequence. While held, faint gray sparkles drift outward from
- * the finger and a light haptic tick repeats — a "rattle" rather than one
- * discrete buzz — stopping (with no skip) if released early.
+ * Full-stage press-and-hold layer: hold anywhere for HOLD_MS (1.5s) to skip
+ * the rest of the sequence. While held, faint gray sparkles drift outward
+ * from the finger and a haptic tick repeats — both start out slow and
+ * accelerate the longer you hold, "winding up" toward the skip rather than
+ * buzzing at a flat rate — stopping (with no skip) if released early.
  */
 export default function HoldToSkip({ onSkip }: { onSkip: () => void }) {
   const [holding, setHolding] = useState(false);
   const [sparkles, setSparkles] = useState<Sparkle[]>([]);
   const holdStartRef = useRef(0);
   const rafRef = useRef<number | null>(null);
-  const sparkleTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const hapticTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const lastHapticRef = useRef(0);
+  const lastSparkleRef = useRef(0);
   const pointerRef = useRef({ x: 0, y: 0 });
   const triggeredRef = useRef(false);
 
   function clearTimers() {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    if (sparkleTimerRef.current) clearInterval(sparkleTimerRef.current);
-    if (hapticTimerRef.current) clearInterval(hapticTimerRef.current);
     rafRef.current = null;
-    sparkleTimerRef.current = null;
-    hapticTimerRef.current = null;
   }
 
   useEffect(() => clearTimers, []);
@@ -68,12 +71,28 @@ export default function HoldToSkip({ onSkip }: { onSkip: () => void }) {
     setHolding(true);
     triggeredRef.current = false;
     holdStartRef.current = performance.now();
-
-    sparkleTimerRef.current = setInterval(spawnSparkles, SPARKLE_INTERVAL_MS);
-    hapticTimerRef.current = setInterval(() => hapticTick("light"), HAPTIC_INTERVAL_MS);
+    lastHapticRef.current = holdStartRef.current;
+    lastSparkleRef.current = holdStartRef.current;
+    hapticTick("light"); // immediate first tick, don't wait a full interval
+    spawnSparkles();
 
     const tick = (now: number) => {
-      if (now - holdStartRef.current >= HOLD_MS) {
+      const elapsed = now - holdStartRef.current;
+      const eased = Math.min(1, elapsed / HOLD_MS) ** 2; // stays slow, then races
+
+      const hapticInterval = HAPTIC_START_MS - (HAPTIC_START_MS - HAPTIC_END_MS) * eased;
+      if (now - lastHapticRef.current >= hapticInterval) {
+        lastHapticRef.current = now;
+        hapticTick("light");
+      }
+
+      const sparkleInterval = SPARKLE_START_MS - (SPARKLE_START_MS - SPARKLE_END_MS) * eased;
+      if (now - lastSparkleRef.current >= sparkleInterval) {
+        lastSparkleRef.current = now;
+        spawnSparkles();
+      }
+
+      if (elapsed >= HOLD_MS) {
         if (!triggeredRef.current) {
           triggeredRef.current = true;
           hapticSuccess();
