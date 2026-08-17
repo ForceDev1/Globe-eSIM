@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import { caveat } from "./fonts";
 import TelegramInit from "@/components/TelegramInit";
 import "./globals.css";
 
@@ -18,7 +17,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`h-full ${caveat.variable}`}>
+    <html lang="en" className="h-full">
       <body className="min-h-full bg-black text-white antialiased">
         {/* window.Telegram.WebApp does not exist just because the page is
             opened inside Telegram — the client only wires it up once this
