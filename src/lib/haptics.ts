@@ -5,6 +5,8 @@
 // neither is guaranteed present, so every call is a safe no-op otherwise.
 type ImpactStyle = "light" | "medium" | "heavy" | "rigid" | "soft";
 
+type SafeAreaInset = { top: number; bottom: number; left: number; right: number };
+
 type TelegramWebApp = {
   ready?: () => void;
   expand?: () => void;
@@ -17,6 +19,14 @@ type TelegramWebApp = {
   // This turns that off so swiping around inside the app (e.g. the
   // press-and-hold gesture) can't accidentally collapse it.
   disableVerticalSwipes?: () => void;
+  // Bot API 8.0+ — the device's own safe area (notch/status bar), and
+  // separately, the area additionally obstructed by Telegram's own
+  // floating controls (close/more buttons) in fullscreen mode. The two
+  // are additive: content needs to clear both.
+  safeAreaInset?: SafeAreaInset;
+  contentSafeAreaInset?: SafeAreaInset;
+  onEvent?: (event: string, handler: () => void) => void;
+  offEvent?: (event: string, handler: () => void) => void;
   HapticFeedback?: {
     impactOccurred: (style: ImpactStyle) => void;
     notificationOccurred: (type: "error" | "success" | "warning") => void;
@@ -30,7 +40,7 @@ declare global {
   }
 }
 
-function webApp(): TelegramWebApp | undefined {
+export function getTelegramWebApp(): TelegramWebApp | undefined {
   if (typeof window === "undefined") return undefined;
   return window.Telegram?.WebApp;
 }
@@ -42,7 +52,7 @@ function webApp(): TelegramWebApp | undefined {
  * Telegram; each individual call no-ops on older clients missing that
  * particular method. */
 export function initTelegramWebApp() {
-  const tg = webApp();
+  const tg = getTelegramWebApp();
   tg?.ready?.();
   tg?.expand?.();
   tg?.requestFullscreen?.();
@@ -59,7 +69,7 @@ const VIBRATE_MS: Record<ImpactStyle, number> = {
 
 /** A short tap — use for per-step beats in a sequence (each word landing). */
 export function hapticTick(style: ImpactStyle = "light") {
-  const tg = webApp();
+  const tg = getTelegramWebApp();
   if (tg?.HapticFeedback) {
     tg.HapticFeedback.impactOccurred(style);
     return;
@@ -69,10 +79,21 @@ export function hapticTick(style: ImpactStyle = "light") {
 
 /** The final "arrived" beat — use once, at the end of a sequence. */
 export function hapticSuccess() {
-  const tg = webApp();
+  const tg = getTelegramWebApp();
   if (tg?.HapticFeedback) {
     tg.HapticFeedback.notificationOccurred("success");
     return;
   }
   navigator.vibrate?.([12, 40, 12]);
+}
+
+/** Picker/tab-style feedback — use for switching between options (nav tabs,
+ * segmented controls), distinct from an impact tick. */
+export function hapticSelect() {
+  const tg = getTelegramWebApp();
+  if (tg?.HapticFeedback) {
+    tg.HapticFeedback.selectionChanged();
+    return;
+  }
+  navigator.vibrate?.(6);
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import HelloVariant3 from "@/components/hello/HelloVariant3";
-import HomeScreen from "@/components/home/HomeScreen";
+import AppShell from "@/components/home/AppShell";
 
 export default function Home() {
   const [introDone, setIntroDone] = useState(false);
@@ -15,5 +15,5 @@ export default function Home() {
     );
   }
 
-  return <HomeScreen />;
+  return <AppShell />;
 }
