@@ -12,13 +12,13 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#000000",
+  themeColor: "#efeeec",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className="h-full">
-      <body className="min-h-full bg-black text-white antialiased">
+      <body className="min-h-full bg-[#efeeec] text-[#15161a] antialiased">
         {/* window.Telegram.WebApp does not exist just because the page is
             opened inside Telegram — the client only wires it up once this
             SDK script has run. beforeInteractive gets it in before our own
